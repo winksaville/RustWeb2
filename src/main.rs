@@ -12,6 +12,7 @@ use tokio::sync::{broadcast, mpsc};
 
 /// Program entry point
 fn main() {
+    println!("Wink: Server started");
     main_inner();
     std::thread::sleep(std::time::Duration::from_millis(10));
     println!("Server stopped");

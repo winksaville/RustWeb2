@@ -1,3 +1,4 @@
+use derivative::Derivative;
 use rustc_hash::FxHashMap as HashMap;
 use rustdb::{GenTransaction, Transaction};
 use std::sync::{Arc, Mutex};
@@ -5,11 +6,15 @@ use std::time::Duration;
 use tokio::sync::{broadcast, mpsc, oneshot};
 
 /// Global shared state.
+#[derive(Derivative)]
+#[derivative(Debug)]
 pub struct SharedState {
     /// Shared storage used for read-only queries.
+    #[derivative(Debug = "ignore")]
     pub spd: Arc<rustdb::SharedPagedData>,
 
     /// Map of builtin SQL functions for Database.
+    #[derivative(Debug = "ignore")]
     pub bmap: Arc<rustdb::BuiltinMap>,
 
     /// Sender channel for sending queries to update task.
@@ -160,6 +165,7 @@ impl SharedState {
 
     /// Process a server transaction.
     pub async fn process(&self, mut trans: Trans) -> Trans {
+        println!("Wink: Processing transaction; trans={trans:?} SharedState.self={self:?}");
         let start = std::time::SystemTime::now();
         let mut trans = if trans.readonly {
             // Readonly request, use read-only copy of database.
@@ -218,7 +224,10 @@ impl SharedState {
 }
 
 /// Transaction to be processed.
+#[derive(Derivative)]
+#[derivative(Debug)]
 pub struct Trans {
+    #[derivative(Debug = "ignore")]
     pub x: GenTransaction,
     pub log: bool,
     pub readonly: bool,
